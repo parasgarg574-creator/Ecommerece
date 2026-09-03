@@ -1,24 +1,23 @@
 import axios from "axios";
 import Environment from "../../Environment/script";
+import Swal from 'sweetalert2'
 const config = {
     headers: { "Content-Type": "application/json" },
+};
+const imageConfig = {
+    headers: { "Content-Type": "multipart/form-data" },
 };
 const baseUrl = Environment.api
 const postApi = (url, payload) => {
     const newUrl = baseUrl + url
     return new Promise((resolve, reject) => {
         axios
-            .post(newUrl, payload, config)
+            .post(newUrl, payload, imageConfig)
             .then((response) => {
                 resolve(response.data);
             })
             .catch((error) => {
-                reject(Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Something went wrong!",
-                    footer: "<a href=\"#\">Why do I have this issue?</a>"
-                }));
+                reject(error || "Something went wrong");
             });
     });
 };

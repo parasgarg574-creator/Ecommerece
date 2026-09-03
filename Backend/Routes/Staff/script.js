@@ -1,0 +1,10 @@
+const StaffRoutes = require("../../Controller/Staff/script");
+const express = require('express');
+const { route } = require("../category/script");
+const router = express.Router();
+router.post("/createStaff",StaffRoutes.createStaff);
+router.get("/getStaff",StaffRoutes.getStaff);
+router.get("/getSingleStaff/:id",StaffRoutes.getSingleStaff);
+router.put("/updateStaff",StaffRoutes.updateStaff);
+router.delete("/deleteStaff",StaffRoutes.deleteStaff);
+module.exports = router;
