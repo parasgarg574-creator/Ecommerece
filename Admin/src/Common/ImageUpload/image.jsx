@@ -72,16 +72,12 @@ const ImageUpload = ({
             disabled={disabled}
             onChange={handleUpload}
           />
-
           <div className="flex items-center justify-center">
             <FiPlus className="text-2xl text-[#E4E7E9] me-2" />
-
             <span>{label}</span>
           </div>
         </label>
       )}
-
-      {/* Image Preview */}
       {preview && (
         <div className="flex flex-wrap gap-3 mt-3">
           {multiple ? (

@@ -1,11 +1,49 @@
-import React from "react";
-const Table = ({ columns = [], data = [], emptyMessage = "No data found" }) => {
+const Table = ({
+    columns = [],
+    data = [],
+    emptyMessage = "No data found",
+    onView,
+    onEdit,
+    onDelete
+}) => {
+    const allColumns = [
+        ...columns,
+        {
+            key: "actions",
+            label: "Actions",
+            render: (item) => (
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => onView(item)}
+                        className="rounded bg-blue-500 px-3 py-1 text-sm text-white"
+                    >
+                        View
+                    </button>
+
+                    <button
+                        onClick={() => onEdit(item)}
+                        className="rounded bg-green-500 px-3 py-1 text-sm text-white"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        onClick={() => onDelete(item)}
+                        className="rounded bg-red-500 px-3 py-1 text-sm text-white"
+                    >
+                        Delete
+                    </button>
+                </div>
+            )
+        }
+    ];
+
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full overflow-hidden rounded-lg border border-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
-                        {columns.map((column) => (
+                        {allColumns.map((column) => (
                             <th
                                 key={column.key}
                                 className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
@@ -15,11 +53,12 @@ const Table = ({ columns = [], data = [], emptyMessage = "No data found" }) => {
                         ))}
                     </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
                     {data.length > 0 ? (
                         data.map((item, index) => (
                             <tr key={item.id || item.email || index}>
-                                {columns.map((column) => (
+                                {allColumns.map((column) => (
                                     <td
                                         key={column.key}
                                         className={`whitespace-nowrap px-6 py-4 ${column.className || ""}`}
@@ -34,7 +73,7 @@ const Table = ({ columns = [], data = [], emptyMessage = "No data found" }) => {
                     ) : (
                         <tr>
                             <td
-                                colSpan={columns.length}
+                                colSpan={allColumns.length}
                                 className="px-6 py-8 text-center text-gray-500"
                             >
                                 {emptyMessage}
@@ -46,4 +85,5 @@ const Table = ({ columns = [], data = [], emptyMessage = "No data found" }) => {
         </div>
     );
 };
+
 export default Table;

@@ -1,195 +1,131 @@
 const Category = require("../../Modles/Category/script");
-
 const createCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
 
-        if (!name || !req.file) {
+        if (!name) {
             return res.status(400).json({
                 success: false,
-                message: "Please enter name and image",
+                message: "Category name is required"
             });
         }
-
-        const existingCategory = await Category.findOne({
-            name: name.trim(),
-        });
-
-        if (existingCategory) {
-            return res.status(409).json({
-                success: false,
-                message: "Category already exists",
-            });
+        let imageUrl = "";
+        if (req.file) {
+            imageUrl = `${req.protocol}://${req.get("host")}/uploads/categories/${req.file.filename}`;
         }
-
         const category = await Category.create({
-            name: name.trim(),
-            image: req.file.filename,
-            description: description || "",
+            name,
+            description,
+            image: imageUrl
         });
 
-        return res.status(201).json({
+        res.status(201).json({
             success: true,
             message: "Category created successfully",
-            data: category,
+            data: category
         });
-    } catch (err) {
-        console.error("Create Category Error:", err);
 
-        return res.status(500).json({
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
             success: false,
-            message: err.message || "Something went wrong",
+            message: "Failed to create category",
+            error: error.message
         });
     }
 };
-
 const getCategory = async (req, res) => {
     try {
-        const categories = await Category.find().sort({
-            createdAt: -1,
-        });
+        const categories = await Category.find();
 
-        return res.status(200).json({
+        res.status(200).json({
             success: true,
-            message:
-                categories.length > 0
-                    ? "Categories fetched successfully"
-                    : "No categories available",
-            data: categories,
+            data: categories
         });
-    } catch (err) {
-        console.error("Get Categories Error:", err);
 
-        return res.status(500).json({
+    } catch (error) {
+        res.status(500).json({
             success: false,
-            message: err.message || "Something went wrong",
+            message: error.message
         });
     }
 };
-
 const getSingleCategory = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const category = await Category.findById(id);
-
+        const category = await Category.findById(req.params.id);
         if (!category) {
             return res.status(404).json({
                 success: false,
-                message: "Category not found",
+                message: "Category not found"
             });
         }
-
-        return res.status(200).json({
+        res.status(200).json({
             success: true,
-            message: "Category found",
-            data: category,
+            data: category
         });
-    } catch (err) {
-        console.error("Get Single Category Error:", err);
-
-        if (err.name === "CastError") {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid category ID",
-            });
-        }
-
-        return res.status(500).json({
+    } catch (error) {
+        res.status(500).json({
             success: false,
-            message: err.message || "Something went wrong",
+            message: error.message
         });
     }
 };
-
 const updateCategory = async (req, res) => {
     try {
-        const { id } = req.params;
         const { name, description } = req.body;
 
-        const updateData = {};
-
-        if (name !== undefined) {
-            updateData.name = name.trim();
-        }
-
-        if (description !== undefined) {
-            updateData.description = description;
-        }
-
-        if (req.file) {
-            updateData.image = req.file.buffer;
-        }
-
-        const category = await Category.findByIdAndUpdate(
-            id,
-            updateData,
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
+        const category = await Category.findById(req.params.id);
 
         if (!category) {
             return res.status(404).json({
                 success: false,
-                message: "Category not found",
+                message: "Category not found"
             });
         }
 
-        return res.status(200).json({
+        category.name = name;
+        category.description = description;
+
+        if (req.file) {
+            category.image = `${req.protocol}://${req.get("host")}/uploads/categories/${req.file.filename}`;
+        }
+
+        await category.save();
+
+        res.status(200).json({
             success: true,
             message: "Category updated successfully",
-            data: category,
+            data: category
         });
-    } catch (err) {
-        console.error("Update Category Error:", err);
 
-        if (err.name === "CastError") {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid category ID",
-            });
-        }
-
-        return res.status(500).json({
+    } catch (error) {
+        res.status(500).json({
             success: false,
-            message: err.message || "Something went wrong",
+            message: error.message
         });
     }
 };
-
 const deleteCategory = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const category = await Category.findByIdAndDelete(id);
+        const category = await Category.findByIdAndDelete(req.params.id);
 
         if (!category) {
             return res.status(404).json({
                 success: false,
-                message: "Category not found",
+                message: "Category not found"
             });
         }
 
-        return res.status(200).json({
+        res.status(200).json({
             success: true,
-            message: "Category deleted successfully",
-            data: category,
+            message: "Category deleted successfully"
         });
-    } catch (err) {
-        console.error("Delete Category Error:", err);
 
-        if (err.name === "CastError") {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid category ID",
-            });
-        }
-
-        return res.status(500).json({
+    } catch (error) {
+        res.status(500).json({
             success: false,
-            message: err.message || "Something went wrong",
+            message: error.message
         });
     }
 };
@@ -198,5 +134,5 @@ module.exports = {
     getCategory,
     getSingleCategory,
     updateCategory,
-    deleteCategory,
+    deleteCategory
 };

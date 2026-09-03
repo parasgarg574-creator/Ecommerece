@@ -39,57 +39,54 @@ const AddEdit = ({ showForm, setShowForm }) => {
         },
     ];
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            let imageUrl = "";
-            if (formData.image) {
-                const imageData = new FormData();
-                imageData.append("image", formData.image);
-                const uploadResponse = await apimethods.postApi(
-                    "/uploadImage",
-                    imageData
-                );
-                imageUrl =
-                    uploadResponse?.data?.url ||
-                    uploadResponse?.data?.imageUrl ||
-                    uploadResponse?.url;
-            }
-            const categoryData = {
-                name: formData.name,
-                description: formData.description,
-                image: imageUrl,
-            };
-            const response = await apimethods.postApi(
-                "/createCategory",
-                categoryData
-            );
-            console.log("Category added successfully:", response);
-            const newCategory = response?.data || response;
-            setStaffList((prev) => [...prev, newCategory]);
-            Swal.fire({
-                title: "Category Added Successfully",
-                icon: "success",
-            });
+    e.preventDefault();
 
-            setFormData({
-                name: "",
-                description: "",
-                image: null,
-            });
+    try {
+        const data = new FormData();
 
-            setShowForm(false);
-        } catch (error) {
-            console.log("Failed to add category:", error);
+        data.append("name", formData.name);
+        data.append("description", formData.description);
 
-            Swal.fire({
-                title: "Failed to Add Category",
-                text:
-                    error?.response?.data?.message ||
-                    "Something went wrong",
-                icon: "error",
-            });
+        if (formData.image) {
+            data.append("image", formData.image);
         }
-    };;
+
+        const response = await apimethods.postApi(
+            "/addcategory",
+            data
+        );
+
+        console.log("Category added successfully:", response);
+
+        const newCategory = response?.data?.data || response?.data;
+
+        setStaffList((prev) => [...prev, newCategory]);
+
+        Swal.fire({
+            title: "Category Added Successfully",
+            icon: "success"
+        });
+
+        setFormData({
+            name: "",
+            description: "",
+            image: null
+        });
+
+        setShowForm(false);
+
+    } catch (error) {
+        console.log("Failed to add category:", error);
+
+        Swal.fire({
+            title: "Failed to Add Category",
+            text:
+                error?.response?.data?.message ||
+                "Something went wrong",
+            icon: "error"
+        });
+    }
+};
     return (
         <div className="min-h-screen">
             {!showForm && (
