@@ -82,16 +82,13 @@ const updateStaff = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, email, password, role, status } = req.body;
-
         const staff = await Staff.findById(id);
-
         if (!staff) {
             return res.status(404).json({
                 success: false,
                 message: "Staff not found",
             });
         }
-
         staff.name = name || staff.name;
         staff.email = email || staff.email;
         staff.password = password || staff.password;
@@ -114,15 +111,13 @@ const deleteStaff = async (req, res) => {
     try {
         const { id } = req.params;
         const staff = await Staff.findById(id);
-
         if (!staff) {
             return res.status(404).json({
                 success: false,
                 message: "Staff not found",
             });
         }
-
-        await staff.remove();
+        await Staff.findByIdAndDelete(id);
 
         return res.status(200).json({
             success: true,

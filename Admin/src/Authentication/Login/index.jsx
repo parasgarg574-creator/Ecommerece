@@ -90,7 +90,6 @@ const Login = () => {
                   : "border-[#00B207] focus:border-[#00B207] focus:ring-green-100"
               }`}
             />
-
             {submitted && !email && (
               <p className="mt-1.5 text-xs text-red-500">
                 Email is required

@@ -11,30 +11,37 @@ const Table = ({
         {
             key: "actions",
             label: "Actions",
-            render: (item) => (
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => onView(item)}
-                        className="rounded bg-blue-500 px-3 py-1 text-sm text-white"
-                    >
-                        View
-                    </button>
+            render: (item) => {
+                const staffId = item?._id || item?.id;
 
-                    <button
-                        onClick={() => onEdit(item)}
-                        className="rounded bg-green-500 px-3 py-1 text-sm text-white"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        onClick={() => onDelete(item)}
-                        className="rounded bg-red-500 px-3 py-1 text-sm text-white"
-                    >
-                        Delete
-                    </button>
-                </div>
-            )
+                return (
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => {
+                                console.log("Full item:", item);
+                                console.log("Staff ID:", staffId);
+                                console.log("ID type:", typeof staffId);
+                                onView?.(staffId);
+                            }}
+                            className="rounded bg-blue-500 px-3 py-1 text-sm text-white"
+                        >
+                            View
+                        </button>
+                        <button
+                            onClick={() => onEdit?.(staffId)}
+                            className="rounded bg-green-500 px-3 py-1 text-sm text-white"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            onClick={() => onDelete?.(staffId)}
+                            className="rounded bg-red-500 px-3 py-1 text-sm text-white"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                );
+            }
         }
     ];
 
@@ -57,15 +64,17 @@ const Table = ({
                 <tbody className="divide-y divide-gray-200 bg-white">
                     {data.length > 0 ? (
                         data.map((item, index) => (
-                            <tr key={item.id || item.email || index}>
+                            <tr key={item?._id || item?.id || item?.email || index}>
                                 {allColumns.map((column) => (
                                     <td
                                         key={column.key}
-                                        className={`whitespace-nowrap px-6 py-4 ${column.className || ""}`}
+                                        className={`whitespace-nowrap px-6 py-4 ${
+                                            column.className || ""
+                                        }`}
                                     >
                                         {column.render
                                             ? column.render(item, index)
-                                            : item[column.key] ?? "-"}
+                                            : item?.[column.key] ?? "-"}
                                     </td>
                                 ))}
                             </tr>
@@ -85,5 +94,4 @@ const Table = ({
         </div>
     );
 };
-
 export default Table;

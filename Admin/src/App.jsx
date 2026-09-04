@@ -1,13 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import React from "react";
-
 import DashboardLayout from "./Layout/DashboardLayout";
-
-
 import Staff from "./Pages/Staff/index";
-
 import Categories from "./Pages/Category/index";
-
 const Login = React.lazy(() => import("./Authentication/Login"));
 const Forgot = React.lazy(() => import("./Authentication/ForgotPassword"));
 const Reset = React.lazy(() => import("./Authentication/ResetPassword"));
